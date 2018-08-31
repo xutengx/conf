@@ -1,13 +1,12 @@
 <?php
 
 declare(strict_types = 1);
-namespace Gaara\Conf;
+namespace Xutengx\Conf;
 
-use Exception;
-use Gaara\Exception\Conf\{NoConnectionException, NotFoundConfFileException, NotFoundEnvFileException,
+use Xutengx\Conf\Exception\{NoConnectionException, NotFoundConfFileException, NotFoundEnvFileException,
 	NotFoundServerIniFileException, UndefinedConnectionException};
 
-class Manager {
+class Conf {
 
 	/**
 	 * 配置文件路径
@@ -30,11 +29,10 @@ class Manager {
 	 * Manager constructor.
 	 * @param string $envFile 环境变量ini文件
 	 * @param string $configFolderPath 配置文件路径
-	 * @throws NotFoundEnvFileException
 	 */
 	public function __construct(string $envFile, string $configFolderPath) {
 		$this->setEnv($envFile);
-		$this->configFolderPath = rtrim($configFolderPath . '/') . '/';
+		$this->configFolderPath = rtrim($configFolderPath, '/') . '/';
 	}
 
 	/**
@@ -52,7 +50,6 @@ class Manager {
 	 * 包含多配置的选择
 	 * @param string $envFile
 	 * @return void
-	 * @throws NotFoundEnvFileException
 	 */
 	protected function setEnv(string $envFile): void {
 		if (is_file($envFile)) {
@@ -67,7 +64,6 @@ class Manager {
 	 * 服务器相关初始化文件
 	 * @param string $filename
 	 * @return array
-	 * @throws Exception
 	 */
 	public function getServerConf(string $filename): array {
 		if (is_file($file = $this->configFolderPath . 'server/' . $filename . '.php')) {
@@ -80,7 +76,6 @@ class Manager {
 	 * 惰性读取配置文件且缓存
 	 * @param string $configName
 	 * @return mixed
-	 * @throws NotFoundConfFileException
 	 */
 	public function __get(string $configName) {
 		if (array_key_exists($configName, $this->data)) {
@@ -97,8 +92,6 @@ class Manager {
 	 * @param string $driver
 	 * @param string $connection
 	 * @return array
-	 * @throws UndefinedConnectionException
-	 * @throws NoConnectionException
 	 */
 	public function getDriverConnection(string $driver, string $connection): array {
 		$conf = $this->{$driver};
